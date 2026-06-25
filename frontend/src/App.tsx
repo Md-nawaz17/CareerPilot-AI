@@ -45,6 +45,10 @@ type AnalysisResult = {
   suggestions: string[];
   strengthAreas: string[];
   preview: string;
+  breakdown?: Array<{ name: string; points: number; reason: string }>;
+  missingSkills?: string[];
+  strengths?: string[];
+  weaknesses?: string[];
 };
 
 const extractTextFromFile = async (file: File): Promise<string> => {
@@ -72,29 +76,46 @@ const buildAnalysis = (resumeText: string, fileName: string): AnalysisResult => 
   const normalized = resumeText.toLowerCase();
   const skillKeywords = ['python', 'react', 'typescript', 'fastapi', 'aws', 'docker', 'postgresql', 'leadership', 'machine learning'];
   const detectedSkills = skillKeywords.filter((skill) => normalized.includes(skill));
-  const atsScore = Math.min(96, 60 + detectedSkills.length * 8 + (normalized.includes('experience') ? 6 : 0));
-  const summary = detectedSkills.length >= 3
-    ? 'This profile shows strong technical depth and clear product-oriented impact.'
-    : 'This profile is promising, and targeted keyword improvements would raise ATS performance.';
-  const strengthAreas = detectedSkills.length > 0 ? detectedSkills.slice(0, 3) : ['Communication', 'Ownership'];
+  const sections = ['experience', 'education', 'skills', 'projects', 'certifications', 'summary'];
+  const sectionScore = sections.filter((section) => normalized.includes(section)).length;
+  const hasContact = normalized.includes('@') || normalized.includes('linkedin') || normalized.includes('github');
+  const hasAction = ['built', 'led', 'shipped', 'delivered', 'developed', 'designed'].some((verb) => normalized.includes(verb));
+  const hasMetrics = /\d/.test(normalized);
+  const hasProjects = normalized.includes('project') || normalized.includes('projects');
+
+  const atsScore = Math.min(100, 45 + Math.min(25, detectedSkills.length * 3) + Math.min(12, sectionScore * 2) + (hasContact ? 8 : 0) + (hasAction ? 5 : 0) + (hasMetrics ? 5 : 0) + (hasProjects ? 5 : 0));
+
+  const strengthAreas = detectedSkills.slice(0, 3).length > 0 ? detectedSkills.slice(0, 3) : ['Communication', 'Ownership'];
   const suggestions = [
-    'Add quantified outcomes to each role to strengthen impact statements.',
-    'Align section headings to standard ATS-friendly formats.',
-    'Tailor keyword placement to the target role and industry.',
+    'Add quantified impact to each role and project.',
+    'Align section headers to ATS-friendly formats.',
+    'Tailor keywords to the role and add relevant tools.',
   ];
 
   return {
     atsScore,
-    summary,
+    summary: atsScore >= 75 ? 'This resume shows strong technical depth and clear hiring relevance.' : 'This profile is promising, and targeted improvements could significantly improve ATS performance.',
     skills: detectedSkills.length > 0 ? detectedSkills : ['Communication', 'Problem solving'],
     suggestions,
     strengthAreas,
     preview: `${fileName} • ${resumeText.slice(0, 180)}${resumeText.length > 180 ? '…' : ''}`,
+    breakdown: [
+      { name: 'Skills', points: Math.min(25, detectedSkills.length * 3), reason: 'Relevant technologies and tools are present.' },
+      { name: 'Structure', points: Math.min(12, sectionScore * 2), reason: 'Useful resume sections improve readability and ATS parsing.' },
+      { name: 'Contact details', points: hasContact ? 8 : 0, reason: 'Professional links and contact details improve recruiter trust.' },
+      { name: 'Action verbs', points: hasAction ? 5 : 0, reason: 'Strong verbs demonstrate ownership and contribution.' },
+      { name: 'Metrics', points: hasMetrics ? 5 : 0, reason: 'Quantified results strengthen credibility.' },
+      { name: 'Projects', points: hasProjects ? 5 : 0, reason: 'Projects demonstrate applied experience.' },
+    ],
+    missingSkills: ['aws', 'docker', 'machine learning'].filter((skill) => !normalized.includes(skill)),
+    strengths: ['Strong technical signal', 'Clear product-oriented background'].filter(() => atsScore >= 60),
+    weaknesses: ['Resume impact statements could be made more specific'].filter(() => atsScore < 90),
   };
 };
 
 function App() {
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
+  const [jobDescription, setJobDescription] = useState('');
   const [status, setStatus] = useState('Upload a resume to see ATS insights, detected skills, and improvement suggestions.');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState('');
@@ -190,13 +211,17 @@ function App() {
               <UploadCloud size={20} />
             </div>
             <h2 className="text-2xl font-semibold">Upload your resume</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-300">Drop in a PDF or DOCX file and receive an ATS-friendly analysis in seconds.</p>
+            <p className="mt-2 text-sm leading-6 text-slate-300">Drop in a PDF, DOCX, or plain text resume to receive recruiter-ready feedback.</p>
             <label className="mt-6 flex cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-cyan-400/35 bg-slate-950/40 px-6 py-10 text-center transition hover:border-cyan-300">
               <UploadCloud size={28} className="text-cyan-300" />
               <span className="mt-3 text-sm font-medium text-white">Choose a resume file</span>
               <span className="mt-2 text-xs text-slate-400">PDF, DOCX, or plain text</span>
               <input type="file" accept=".pdf,.docx,.txt" className="hidden" onChange={handleUpload} />
             </label>
+            <div className="mt-6 rounded-2xl border border-white/10 bg-slate-950/45 p-4">
+              <label className="text-sm font-medium text-slate-200" htmlFor="jobDescription">Optional job description</label>
+              <textarea id="jobDescription" value={jobDescription} onChange={(event) => setJobDescription(event.target.value)} rows={5} className="mt-3 w-full rounded-xl border border-white/10 bg-slate-900/70 px-3 py-3 text-sm text-slate-100 outline-none ring-0" placeholder="Paste a target role to evaluate keyword and experience fit..." />
+            </div>
             <p className="mt-4 text-sm text-slate-400">{status}</p>
             {error ? <p className="mt-3 flex items-center gap-2 text-sm text-rose-300"><AlertTriangle size={16} /> {error}</p> : null}
           </div>
@@ -242,6 +267,20 @@ function App() {
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
                   <p className="text-sm text-slate-400">Summary</p>
                   <p className="mt-2 text-sm leading-6 text-slate-300">{analysis.summary}</p>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                  <p className="text-sm text-slate-400">Score breakdown</p>
+                  <div className="mt-3 space-y-2">
+                    {analysis.breakdown?.map((item) => (
+                      <div key={item.name} className="rounded-xl border border-white/10 bg-slate-950/40 p-3">
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-slate-200">{item.name}</span>
+                          <span className="text-cyan-300">+{item.points}</span>
+                        </div>
+                        <p className="mt-1 text-xs text-slate-400">{item.reason}</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
                   <p className="text-sm text-slate-400">Improvement suggestions</p>
