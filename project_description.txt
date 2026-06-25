@@ -1,0 +1,23 @@
+CareerPilot AI
+
+CareerPilot AI is a modern, production-style AI-powered resume analyzer and career assistant designed to help job seekers improve their chances of getting noticed by recruiters and applicant tracking systems. The platform allows users to upload their resume in PDF, DOCX, or plain text format and receive a detailed ATS-style analysis, including an overall score, a breakdown of strengths and weaknesses, and actionable recommendations for improvement. Users can also paste a job description to compare it with their resume and receive a match percentage, highlighted missing skills, recruiter-style insights, and keyword coverage suggestions.
+
+The project is built as a polished SaaS-style experience with a professional interface, smooth interactions, and a scalable architecture. It combines a responsive frontend with a lightweight backend analysis engine that evaluates resume structure, contact details, formatting quality, action verbs, measurable achievements, skills alignment, and project awareness. The app is designed to be extended with future features such as AI-generated cover letters, interview preparation, career roadmaps, and personalized job recommendations.
+
+Key Features:
+- Resume upload and parsing from PDF, DOCX, and text files
+- ATS readiness scoring and detailed feedback
+- Job description matching and compatibility analysis
+- Highlighting of missing skills and keyword gaps
+- Recruiter-style summary and improvement suggestions
+- Modern, clean, and responsive dashboard experience
+- Production-ready deployment structure for public hosting
+
+Tech Stack:
+- Frontend: React, TypeScript, Vite, Tailwind CSS, Framer Motion
+- Backend: Python-based analysis service
+- Parsing libraries: pdfjs-dist, mammoth
+- Testing: Vitest, Pytest
+
+Project Goal:
+CareerPilot AI aims to make resume optimization simple, intelligent, and accessible for professionals who want to stand out in competitive job markets. It showcases a complete full-stack product experience, strong UI/UX design, practical AI-assisted career tools, and deployment readiness in a single polished application.
