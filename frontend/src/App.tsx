@@ -7,7 +7,9 @@ import {
   Brain,
   CheckCircle2,
   FileText,
+  Moon,
   Sparkles,
+  Sun,
   ShieldCheck,
   Target,
   UploadCloud,
@@ -116,6 +118,7 @@ const buildAnalysis = (resumeText: string, fileName: string): AnalysisResult => 
 function App() {
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
   const [jobDescription, setJobDescription] = useState('');
+  const [isDarkMode, setIsDarkMode] = useState(true);
   const [status, setStatus] = useState('Upload a resume to see ATS insights, detected skills, and improvement suggestions.');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState('');
@@ -155,11 +158,16 @@ function App() {
     <div className="min-h-screen bg-transparent text-slate-100">
       <header className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6 lg:px-8">
         <div className="text-xl font-semibold tracking-tight">CareerPilot AI</div>
-        <nav className="hidden gap-6 text-sm text-slate-300 md:flex">
-          <a href="#features" className="transition hover:text-white">Features</a>
-          <a href="#get-started" className="transition hover:text-white">Analyzer</a>
-          <a href="#results" className="transition hover:text-white">Results</a>
-        </nav>
+        <div className="flex items-center gap-4">
+          <nav className="hidden gap-6 text-sm text-slate-300 md:flex">
+            <a href="#features" className="transition hover:text-white">Features</a>
+            <a href="#get-started" className="transition hover:text-white">Analyzer</a>
+            <a href="#results" className="transition hover:text-white">Results</a>
+          </nav>
+          <button type="button" onClick={() => setIsDarkMode((current) => !current)} className="rounded-full border border-white/10 bg-white/10 p-2 text-slate-200 transition hover:bg-white/20">
+            {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
+          </button>
+        </div>
       </header>
 
       <main className="mx-auto max-w-7xl px-6 pb-16 lg:px-8">
@@ -174,6 +182,11 @@ function App() {
             <p className="mt-5 max-w-2xl text-lg text-slate-300">
               CareerPilot AI helps professionals optimize resumes, improve ATS alignment, prepare for interviews, and build a measurable career roadmap.
             </p>
+            <div className="mt-6 flex flex-wrap gap-2">
+              {['ATS scoring', 'Job matching', 'Recruiter-ready feedback'].map((item) => (
+                <span key={item} className="rounded-full border border-cyan-400/25 bg-cyan-500/10 px-3 py-1 text-sm text-cyan-200">{item}</span>
+              ))}
+            </div>
             <div className="mt-8 flex flex-wrap gap-4">
               <a href="#get-started" className="inline-flex items-center gap-2 rounded-full bg-cyan-500 px-5 py-3 font-medium text-slate-950 transition hover:bg-cyan-400">
                 Start Analysis <ArrowRight size={18} />
