@@ -1,0 +1,21 @@
+# Node dependencies
+frontend/node_modules/
+
+# Build output
+frontend/dist/
+frontend/.vite/
+
+# Python environment
+.venv/
+backend/__pycache__/
+**/__pycache__/
+*.py[cod]
+
+# Environment files
+.env
+.env.*
+
+# Editor files
+.vscode/
+.DS_Store
+Thumbs.db
