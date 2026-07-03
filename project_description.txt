@@ -1,23 +1,31 @@
 CareerPilot AI
 
-CareerPilot AI is a modern, production-style AI-powered resume analyzer and career assistant designed to help job seekers improve their chances of getting noticed by recruiters and applicant tracking systems. The platform allows users to upload their resume in PDF, DOCX, or plain text format and receive a detailed ATS-style analysis, including an overall score, a breakdown of strengths and weaknesses, and actionable recommendations for improvement. Users can also paste a job description to compare it with their resume and receive a match percentage, highlighted missing skills, recruiter-style insights, and keyword coverage suggestions.
+CareerPilot AI is a modern, production-style AI-powered resume analyzer and career assistant built to help job seekers improve their visibility to recruiters and applicant tracking systems. The platform allows users to upload or paste their resume and receive a detailed ATS-style analysis, including an overall score, a breakdown of strengths and weaknesses, and actionable recommendations for improvement. Users can also compare their resume against a target job description to receive a match percentage, missing-skill insights, recruiter-style feedback, and keyword alignment suggestions.
 
-The project is built as a polished SaaS-style experience with a professional interface, smooth interactions, and a scalable architecture. It combines a responsive frontend with a lightweight backend analysis engine that evaluates resume structure, contact details, formatting quality, action verbs, measurable achievements, skills alignment, and project awareness. The app is designed to be extended with future features such as AI-generated cover letters, interview preparation, career roadmaps, and personalized job recommendations.
+The project now includes a fully integrated AI-powered cover-letter generation flow that uses an NVIDIA-compatible OpenAI-style client when configured, with graceful fallback to existing providers and local generation logic. The backend analysis engine evaluates resume structure, contact details, formatting quality, action verbs, measurable achievements, skill alignment, and project awareness, while the frontend delivers a polished SaaS-style experience with responsive interactions and a professional interface.
 
 Key Features:
 - Resume upload and parsing from PDF, DOCX, and text files
-- ATS readiness scoring and detailed feedback
+- ATS readiness scoring with detailed feedback
 - Job description matching and compatibility analysis
 - Highlighting of missing skills and keyword gaps
-- Recruiter-style summary and improvement suggestions
+- AI-generated cover letter support using NVIDIA-compatible inference
+- Recruiter-style suggestions and improvement recommendations
 - Modern, clean, and responsive dashboard experience
-- Production-ready deployment structure for public hosting
+- Backend API tested and verified with Pytest
 
 Tech Stack:
 - Frontend: React, TypeScript, Vite, Tailwind CSS, Framer Motion
-- Backend: Python-based analysis service
+- Backend: Python, FastAPI, Pydantic
+- AI Integration: OpenAI-compatible client with NVIDIA inference support
 - Parsing libraries: pdfjs-dist, mammoth
 - Testing: Vitest, Pytest
 
 Project Goal:
-CareerPilot AI aims to make resume optimization simple, intelligent, and accessible for professionals who want to stand out in competitive job markets. It showcases a complete full-stack product experience, strong UI/UX design, practical AI-assisted career tools, and deployment readiness in a single polished application.
+CareerPilot AI aims to make resume optimization simple, intelligent, and accessible for professionals who want to stand out in competitive job markets. It demonstrates a complete full-stack product experience, strong UI/UX design, practical AI-assisted career tools, and validated backend functionality in a single polished application.
+
+Pending / Upcoming Enhancements:
+- Add more advanced AI-driven career guidance and interview preparation features
+- Expand resume parsing support and improve document handling accuracy
+- Integrate additional language models and response personalization options
+- Further refine the user experience based on feedback and usage insights
