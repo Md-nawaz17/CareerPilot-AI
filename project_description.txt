@@ -10,6 +10,13 @@ The core experience is intentionally simple:
 - Review a weighted breakdown of resume strengths and weaknesses.
 - Optionally paste a job description to run a match and create a role-specific cover letter.
 
+Recent updates
+
+- Added new app screenshots in `/screenshots` that reflect the current analyzer UI and workflow order.
+- Updated README references so the documentation matches the current app state without changing architecture or setup instructions.
+- Improved `/api/analyze/job-match` scoring in `backend/app/routers/analysis.py` by filtering common stopwords, normalizing word-form variants, and calculating match percentage from meaningful job-description terms.
+- Added regression coverage in `backend/tests/test_api.py` for stopword stripping and word-variant matching.
+
 Primary workflow: resume-only ATS scoring
 
 1. Open the app at http://127.0.0.1:5173/.
