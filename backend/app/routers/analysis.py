@@ -26,9 +26,93 @@ def _normalize(text: str) -> str:
     return text
 
 
+STOPWORDS = {
+    "a",
+    "an",
+    "and",
+    "are",
+    "as",
+    "at",
+    "be",
+    "been",
+    "being",
+    "by",
+    "for",
+    "from",
+    "had",
+    "has",
+    "have",
+    "he",
+    "her",
+    "his",
+    "in",
+    "is",
+    "it",
+    "its",
+    "me",
+    "more",
+    "my",
+    "no",
+    "not",
+    "of",
+    "on",
+    "or",
+    "our",
+    "s",
+    "she",
+    "so",
+    "than",
+    "that",
+    "the",
+    "their",
+    "them",
+    "then",
+    "there",
+    "these",
+    "they",
+    "this",
+    "to",
+    "was",
+    "were",
+    "what",
+    "when",
+    "where",
+    "which",
+    "who",
+    "will",
+    "with",
+    "would",
+    "you",
+    "your",
+    "looking",
+}
+
+
+def _stem_token(token: str) -> str:
+    if token.endswith("ies") and len(token) > 4:
+        return token[:-3] + "y"
+    if token.endswith("ing") and len(token) > 5:
+        return token[:-3]
+    if token.endswith("ed") and len(token) > 4:
+        return token[:-2]
+    if token.endswith("ers") and len(token) > 4:
+        return token[:-3] + "er"
+    if token.endswith("s") and len(token) > 3:
+        return token[:-1]
+    return token
+
+
 def _extract_keywords(text: str) -> List[str]:
     tokens = re.findall(r"[a-z0-9+#.]+", _normalize(text))
-    return [token for token in tokens if len(token) > 2]
+    return [token for token in tokens if len(token) > 1]
+
+
+def _filter_keywords(tokens: List[str]) -> List[str]:
+    return [
+        _stem_token(token)
+        for token in tokens
+        if token not in STOPWORDS
+    ]
 
 
 def _extract_section(text: str, label: str) -> str:
@@ -36,6 +120,35 @@ def _extract_section(text: str, label: str) -> str:
     match = re.search(pattern, text, flags=re.IGNORECASE)
     if match:
         return match.group(1).strip()
+    return ""
+
+
+def _format_candidate_name(value: str) -> str:
+    words = re.findall(r"[A-Za-z][A-Za-z'.-]*", value)
+    return " ".join(word.capitalize() if word.isupper() else word for word in words)
+
+
+def _extract_candidate_name(resume_text: str) -> str:
+    labelled_match = re.search(
+        r"(?im)^\s*(?:candidate\s+)?name\s*[:\-]\s*([A-Za-z][A-Za-z'.-]*(?:\s+[A-Za-z][A-Za-z'.-]*){1,3})",
+        resume_text,
+    )
+    if labelled_match:
+        return _format_candidate_name(labelled_match.group(1))
+
+    for line in resume_text.splitlines()[:12]:
+        compact_line = " ".join(line.split())
+        if not compact_line:
+            continue
+
+        uppercase_match = re.match(r"^([A-Z][A-Z'.-]*(?:\s+[A-Z][A-Z'.-]*){1,3})\b", compact_line)
+        if uppercase_match:
+            return _format_candidate_name(uppercase_match.group(1))
+
+        title_case_match = re.match(r"^([A-Z][a-z'.-]*(?:\s+[A-Z][a-z'.-]*){1,2})\b", compact_line)
+        if title_case_match:
+            return _format_candidate_name(title_case_match.group(1))
+
     return ""
 
 
@@ -55,14 +168,12 @@ def _build_resume_profile(resume_text: str) -> Dict[str, Any]:
 
     email_match = re.search(r"([a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,})", resume_text, flags=re.IGNORECASE)
     phone_match = re.search(r"(?:\+?\d[\d\s().-]{7,}\d)", resume_text)
-    name_match = re.search(r"^([A-Z][a-z]+(?:\s+[A-Z][a-z]+)+)", resume_text, flags=re.MULTILINE)
 
     if email_match:
         sections["email"] = email_match.group(1)
     if phone_match:
         sections["phone"] = phone_match.group(0)
-    if name_match:
-        sections["name"] = name_match.group(1)
+    sections["name"] = _extract_candidate_name(resume_text)
 
     sections["summary"] = _extract_section(resume_text, "summary") or ""
     sections["experience"] = _extract_section(resume_text, "experience") or ""
@@ -129,15 +240,14 @@ def analyze_ats(payload: ATSRequest):
 
 @router.post("/job-match")
 def job_match(payload: JobMatchRequest):
-    resume_tokens = set(_extract_keywords(payload.resume_text))
-    jd_tokens = set(_extract_keywords(payload.job_description))
+    resume_tokens = set(_filter_keywords(_extract_keywords(payload.resume_text)))
+    jd_tokens = set(_filter_keywords(_extract_keywords(payload.job_description)))
 
-    if not resume_tokens and not jd_tokens:
+    if not resume_tokens or not jd_tokens:
         match_percentage = 0
     else:
         overlap = resume_tokens & jd_tokens
-        denominator = max(len(resume_tokens), len(jd_tokens), 1)
-        match_percentage = round((len(overlap) / denominator) * 100, 2)
+        match_percentage = round((len(overlap) / max(len(jd_tokens), 1)) * 100, 2)
 
     missing_keywords = sorted(list(jd_tokens - resume_tokens))
     present_keywords = sorted(list(resume_tokens & jd_tokens))
