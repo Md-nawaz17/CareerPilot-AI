@@ -63,7 +63,8 @@ const highlightText = (text: string, matched: string[], missing: string[]) => {
   const allKeywords = Array.from(new Set([...matched, ...missing]));
   const sortedKeywords = [...allKeywords].sort((a, b) => b.length - a.length);
 
-  const pattern = new RegExp(`(${sortedKeywords.map((word) => word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`, 'gi');
+  const escapedKeywords = sortedKeywords.map((word) => word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  const pattern = new RegExp(`(?<![A-Za-z0-9_])(${escapedKeywords.join('|')})(?![A-Za-z0-9_])`, 'gi');
 
   return text.split(pattern).map((part, index) => {
     const normalized = part.toLowerCase();
