@@ -1,22 +1,25 @@
-# Python
-__pycache__/
-*.py[cod]
-*.pyo
-*.pyd
+# Node dependencies
+frontend/node_modules/
+
+# Build output
+frontend/dist/
+frontend/.vite/
+
+# TypeScript build info
+frontend/tsconfig.app.tsbuildinfo
+frontend/tsconfig.node.tsbuildinfo
+
+# Python environment
 .venv/
-venv/
-.pytest_cache/
+backend/__pycache__/
+**/__pycache__/
+*.py[cod]
 
-# Node
-node_modules/
-dist/
-coverage/
-
-# Environment
+# Environment files
 .env
-.env.local
-.env.*.local
+.env.*
 
-# OS
+# Editor files
+.vscode/
 .DS_Store
 Thumbs.db

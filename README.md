@@ -1,57 +1,83 @@
 # CareerPilot AI
 
-CareerPilot AI is a polished ATS resume analyzer and career assistant experience for recruiters, candidates, and portfolio showcases.
+A full-stack resume analyzer and career assistant built for job seekers who want fast, actionable ATS feedback while keeping their workflow simple.
 
-## Architecture
+CareerPilot AI lets you upload or paste your resume, get an ATS-style score without a job description, and then add a target role to compare your resume, generate a tailored cover letter, and export a polished summary.
 
-- Frontend: React + Vite + Tailwind CSS + Framer Motion
-- Backend: Python router-based analysis service
-- Testing: Vitest + pytest
-- Deployment: Vercel + Render + Docker
+## Screenshots
+
+![Resume upload and ATS score header](screenshots/app-ats-score-93.png)
+
+![Score breakdown and recommendations](screenshots/app-score-breakdown-recommendations.png)
+
+![Keyword match preview](screenshots/app-keyword-match-preview.png)
+
+![Cover letter output with resume highlights](screenshots/app-cover-letter-highlights.png)
+
+![Score history panel](screenshots/app-score-history.png)
 
 ## Features
 
-- Resume upload and parsing for PDF, DOCX, and plain text
-- ATS score generation with a weighted breakdown
-- Job-description matching with recruiter-style summary
-- Responsive SaaS-style dashboard experience
+- Resume-only ATS scoring with no job description required for the first pass.
+- Upload PDF, DOCX, and TXT resumes with in-browser text extraction or paste resume text manually.
+- Weighted ATS scoring across resume categories like contact info, summary, skills match, work experience, education, formatting, and measurable achievements.
+- Optional job matching against any target job description with matched keywords, missing keywords, recruiter suggestions, and a match percentage.
+- Tailored cover letter generation with provider fallback for local draft output.
+- PDF export for ATS reports.
+- Offline fallback support when the backend or provider is unavailable.
+- Browser local storage history for the five most recent scans.
+- Light and dark theme support.
 
-## Project Structure
+## How it works
 
-- frontend/: React application
-- backend/: Python analysis service
-- tests/: API and integration tests
+1. Open the app in your browser and launch the analyzer.
+2. Upload a resume or paste your resume text.
+3. Generate an ATS score to see a weighted breakdown and recommendations.
+4. Add a target job description when you want a role-specific match or cover letter.
+5. Run a job match to see keyword gaps and tailored suggestions.
+6. Generate a cover letter and export your ATS report as PDF.
 
-## Getting Started
+## Tech stack
+
+- React 18 + TypeScript
+- Vite
+- Tailwind CSS
+- Framer Motion
+- FastAPI
+- jsPDF
+- mammoth
+- pdf.js
+
+## Local development
 
 ### Backend
 
-```bash
-cd backend
-python -m venv .venv
-.venv\\Scripts\\activate
-pip install -r requirements.txt
-uvicorn app.main:app --reload
+```powershell
+.\.venv\Scripts\python.exe -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
 ```
 
 ### Frontend
 
-```bash
+```powershell
 cd frontend
-npm install
-npm run dev
+node .\node_modules\typescript\bin\tsc -b
+node .\node_modules\vite\bin\vite.js --host 127.0.0.1 --port 5173
 ```
 
-## Testing
+Open the application at: http://127.0.0.1:5173/
 
-```bash
-pytest backend/tests
-npm --prefix frontend test
-npm --prefix frontend run build
+### Test and build
+
+Backend tests:
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest backend\tests
 ```
 
-## Deployment
+Frontend build:
 
-- Frontend: Vercel using [vercel.json](vercel.json)
-- Backend: Render using [render.yaml](render.yaml)
-- Environment examples: [backend/.env.example](backend/.env.example) and [frontend/.env.example](frontend/.env.example)
+```powershell
+cd frontend
+node .\node_modules\typescript\bin\tsc -b
+node .\node_modules\vite\bin\vite.js build
+```

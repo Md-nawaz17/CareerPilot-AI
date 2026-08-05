@@ -1,0 +1,195 @@
+CareerPilot AI
+
+Project overview
+
+CareerPilot AI is a modern full-stack resume intelligence platform built for job seekers who want fast, practical ATS feedback without unnecessary complexity. The product is designed so users can get a meaningful resume score from their own document first, and then optionally add a target role to compare, optimize, and generate a tailored cover letter.
+
+The core experience is intentionally simple:
+- Upload or paste your resume.
+- Generate an ATS-style score from the resume alone.
+- Review a weighted breakdown of resume strengths and weaknesses.
+- Optionally paste a job description to run a match and create a role-specific cover letter.
+
+Recent updates
+
+- Added new app screenshots in `/screenshots` that reflect the current analyzer UI and workflow order.
+- Updated README references so the documentation matches the current app state without changing architecture or setup instructions.
+- Improved `/api/analyze/job-match` scoring in `backend/app/routers/analysis.py` by filtering common stopwords, normalizing word-form variants, and calculating match percentage from meaningful job-description terms.
+- Added regression coverage in `backend/tests/test_api.py` for stopword stripping and word-variant matching.
+
+Primary workflow: resume-only ATS scoring
+
+1. Open the app at http://127.0.0.1:5173/.
+2. Launch the analyzer from the landing page.
+3. Upload a PDF, DOCX, or TXT resume, or paste plain resume text.
+4. Click Analyze ATS / Get ATS score.
+5. Review the score, category breakdown, tailored recommendations, resume preview, PDF export option, and recent scan history.
+
+This first workflow only sends `resume_text` to `POST /api/analyze/ats`. A job description is not required, and the resume-only report is the fastest way to start improving a resume immediately.
+
+Optional workflow: job matching and cover letter generation
+
+1. Add a target job description in the optional section.
+2. Click Match against job to compare your resume to the role.
+3. Review match percentage, matched keywords, missing keywords, and recruiter-style suggestions.
+4. Click Generate cover letter to create a role-specific draft.
+
+Both job matching and cover-letter generation require a resume and a job description. When either input is missing, the UI displays clear validation messaging.
+
+Key features
+
+- Resume-only ATS scoring with no job description required for the initial pass.
+- File upload for PDF, DOCX, and TXT resumes with browser-side text extraction.
+- Manual text entry for paste-based resumes.
+- Weighted ATS breakdown across resume categories such as contact info, summary, skills match, work experience, education, formatting, and achievements.
+- Color-coded breakdown feedback to highlight strong, moderate, and weak areas.
+- Optional target job description matching with present/missing keyword analysis.
+- Optional tailored cover-letter generation with provider fallback.
+- PDF export for ATS reports.
+- Local browser history for the five most recent scans.
+- Light and dark theme support.
+- Offline fallback experience when the backend or provider is unavailable.
+- Responsive landing page and analyzer dashboard.
+
+Frontend architecture
+
+Location: `frontend/`
+
+- React 18 with TypeScript
+- Vite
+- Tailwind CSS
+- Framer Motion
+- Lucide React icons
+- jsPDF for ATS report export
+- pdfjs-dist for PDF text extraction
+- mammoth for DOCX text extraction
+
+Key frontend files
+
+- `frontend/src/App.tsx`
+  - Manages landing/app view state.
+  - Coordinates API calls, loading and error handling, PDF export, and scan history.
+  - Separates resume-only ATS scoring from optional job match and cover-letter actions.
+
+- `frontend/src/components/ResumeUpload.tsx`
+  - Validates PDF, DOCX, and TXT uploads.
+  - Extracts text from resume files.
+  - Displays the primary ATS scoring action next to the input area.
+
+- `frontend/src/components/DashboardHeader.tsx`
+  - Presents the current workflow and the split between resume scoring and optional role-targeted tools.
+
+- `frontend/src/components/LandingPage.tsx`
+  - Renders the public landing page and launches the analyzer.
+
+- `frontend/src/components/ScanCard.tsx`
+  - Shows an animated scan preview on the landing page.
+
+- `frontend/src/pages/FallbackPage.tsx`
+  - Displays the offline analysis experience if the backend cannot be reached.
+
+Backend architecture
+
+Location: `backend/`
+
+- FastAPI
+- Pydantic data models
+- Uvicorn
+- Pytest and FastAPI TestClient
+
+Key backend files
+
+- `backend/app/main.py`
+  - Creates the FastAPI app, configures CORS, and registers API routes.
+
+- `backend/app/routers/analysis.py`
+  - Implements ATS scoring, resume profile extraction, job matching, and keyword analysis.
+
+- `backend/app/routers/cover_letter.py`
+  - Implements cover-letter generation using external providers and local fallback.
+
+- `backend/tests/test_api.py`
+  - Tests ATS scoring, job matching, cover-letter fallback, and provider behavior.
+
+API contract
+
+- `POST /api/analyze/ats`
+  - Input: `resume_text`
+  - Output: overall score, weighted category breakdown, extracted profile fields, and recommendations.
+  - Does not require or accept a job description.
+
+- `POST /api/analyze/job-match`
+  - Input: `resume_text` and `job_description`
+  - Output: match percentage, present keywords, missing keywords, and recruiter suggestions.
+
+- `POST /api/analyze/cover-letter`
+  - Input: `resume_text` and `job_description`
+  - Output: generated `cover_letter` text.
+
+AI provider configuration
+
+Cover-letter generation uses the first available configured provider:
+
+- `NVIDIA_API_KEY` or `OPENAI_API_KEY`
+- `NVIDIA_BASE_URL`
+- `NVIDIA_MODEL`
+- `NVIDIA_TEMPERATURE`
+- `NVIDIA_TOP_P`
+- `NVIDIA_MAX_TOKENS`
+- `ANTHROPIC_API_KEY`
+
+If no external provider is configured, the backend falls back to a local cover-letter generator.
+
+Running locally
+
+Backend:
+
+```powershell
+.\.venv\Scripts\python.exe -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
+```
+
+Frontend:
+
+```powershell
+cd frontend
+node .\node_modules\vite\bin\vite.js --host 127.0.0.1 --port 5173
+```
+
+Open the app at:
+
+http://127.0.0.1:5173/
+
+Open the backend docs at:
+
+http://127.0.0.1:8000/docs
+
+Build and test
+
+Backend tests:
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest backend\tests
+```
+
+Frontend type check:
+
+```powershell
+cd frontend
+node .\node_modules\typescript\bin\tsc -b
+```
+
+Frontend production build:
+
+```powershell
+cd frontend
+node .\node_modules\vite\bin\vite.js build
+```
+
+Known limitations
+
+- ATS scoring is heuristic and keyword-based, not trained on a machine learning model.
+- Job matching is based on keyword overlap rather than semantic embedding similarity.
+- Job matching currently uses raw token overlap and can overcount stopwords or undercount word-form variants, reducing accuracy.
+- Cover-letter quality depends on configured provider access; the local fallback is generic by design.
+- Resume parsing supports PDF, DOCX, and TXT only.
+- The app does not currently include authentication, database persistence, or user accounts.

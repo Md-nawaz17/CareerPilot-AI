@@ -1,21 +1,18 @@
-from app.routers import analysis, jobs, user
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
+from backend.app.routers.analysis import router as analysis_router
+from backend.app.routers.cover_letter import router as cover_letter_router
 
-class App:
-    def __init__(self):
-        self.routes = []
-        self._register_routes()
+app = FastAPI(title="CareerPilot AI Backend")
 
-    def _register_routes(self):
-        self.routes.extend([
-            ('GET', '/health', self.health_check),
-            ('POST', '/api/resume/analyze', analysis.analyze_resume),
-            ('POST', '/api/job-match', jobs.job_match),
-            ('GET', '/api/user/profile', user.get_profile),
-        ])
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-    def health_check(self):
-        return {'status': 'ok', 'service': 'careerpilot-ai'}
-
-
-app = App()
+app.include_router(analysis_router, prefix="/api/analyze")
+app.include_router(cover_letter_router, prefix="/api/analyze")
