@@ -4,6 +4,7 @@ frontend/node_modules/
 # Build output
 frontend/dist/
 frontend/.vite/
+.run-logs/
 
 # TypeScript build info
 frontend/tsconfig.app.tsbuildinfo
@@ -23,3 +24,9 @@ backend/__pycache__/
 .vscode/
 .DS_Store
 Thumbs.db
+
+# Build artifacts and runtime logs
+*.pyc
+__pycache__/
+*.tsbuildinfo
+*.log
