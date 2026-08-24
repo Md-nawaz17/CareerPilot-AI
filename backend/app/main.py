@@ -1,8 +1,13 @@
+from pathlib import Path
+
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend.app.routers.analysis import router as analysis_router
 from backend.app.routers.cover_letter import router as cover_letter_router
+
+load_dotenv(Path(__file__).resolve().parents[2] / ".env", override=False)
 
 app = FastAPI(title="CareerPilot AI Backend")
 

@@ -28,6 +28,11 @@ def _normalize(text: str) -> str:
 
 STOPWORDS = {
     "a",
+    "about",
+    "above",
+    "after",
+    "all",
+    "also",
     "an",
     "and",
     "are",
@@ -44,34 +49,61 @@ STOPWORDS = {
     "have",
     "he",
     "her",
+    "hers",
+    "him",
+    "himself",
     "his",
     "in",
     "is",
     "it",
     "its",
+    "itself",
     "me",
     "more",
+    "most",
     "my",
+    "myself",
     "no",
+    "nor",
     "not",
     "of",
     "on",
     "or",
     "our",
+    "ours",
+    "ourselves",
+    "out",
+    "over",
+    "own",
     "s",
     "she",
     "so",
+    "some",
+    "such",
     "than",
     "that",
     "the",
     "their",
+    "theirs",
     "them",
+    "themselves",
     "then",
     "there",
     "these",
     "they",
     "this",
+    "those",
+    "through",
     "to",
+    "too",
+    "under",
+    "until",
+    "up",
+    "use",
+    "used",
+    "uses",
+    "using",
+    "very",
     "was",
     "were",
     "what",
@@ -84,7 +116,20 @@ STOPWORDS = {
     "would",
     "you",
     "your",
+    "yours",
+    "yourself",
+    "yourselves",
     "looking",
+    "look",
+    "job",
+    "jobs",
+    "role",
+    "roles",
+    "requirements",
+    "responsibilities",
+    "experience",
+    "skill",
+    "skills",
 }
 
 
@@ -97,6 +142,10 @@ def _stem_token(token: str) -> str:
         return token[:-2]
     if token.endswith("ers") and len(token) > 4:
         return token[:-3] + "er"
+    if token.endswith("eer") and len(token) > 4:
+        return token
+    if token.endswith("er") and len(token) > 5:
+        return token[:-2]
     if token.endswith("s") and len(token) > 3:
         return token[:-1]
     return token
@@ -108,11 +157,15 @@ def _extract_keywords(text: str) -> List[str]:
 
 
 def _filter_keywords(tokens: List[str]) -> List[str]:
-    return [
-        _stem_token(token)
-        for token in tokens
-        if token not in STOPWORDS
-    ]
+    filtered = []
+    for token in tokens:
+        stemmed = _stem_token(token)
+        if stemmed in STOPWORDS:
+            continue
+        if len(stemmed) <= 2:
+            continue
+        filtered.append(stemmed)
+    return filtered
 
 
 def _extract_section(text: str, label: str) -> str:
