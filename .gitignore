@@ -30,3 +30,6 @@ Thumbs.db
 __pycache__/
 *.tsbuildinfo
 *.log
+
+# Local security scan output
+npm-audit.json
