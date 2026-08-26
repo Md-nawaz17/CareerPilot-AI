@@ -1,22 +1,19 @@
 # Deployment Guide
 
-## Frontend (Vercel)
-1. Import the repository into Vercel.
-2. Set the root directory to `frontend`.
-3. Use the build command `npm run build`.
-4. Set the output directory to `dist`.
-5. Add `VITE_API_BASE_URL` and `VITE_APP_NAME` as environment variables.
+## GitHub Pages
 
-## Backend (Render)
-1. Create a Render web service from the `backend` folder.
-2. Set the build command to `pip install -r requirements.txt`.
-3. Set the start command to `uvicorn app.main:app --host 0.0.0.0 --port 10000`.
-4. Add `ENVIRONMENT`, `SECRET_KEY`, and `ALLOWED_ORIGINS` as environment variables.
+The frontend deploys to [GitHub Pages](https://md-nawaz17.github.io/CareerPilot-AI/) through `.github/workflows/deploy-pages.yml`.
 
-## Database (MongoDB Atlas)
-1. Create a MongoDB Atlas cluster.
-2. Configure a database user and network access.
-3. Store the connection string in environment variables for future persistence layer integration.
+1. In **Settings → Pages**, set **Build and deployment → Source** to **GitHub Actions**.
+2. Push to `main`, or run **Deploy to GitHub Pages** manually from the Actions tab.
+3. The workflow installs locked frontend dependencies with `npm ci`, builds with `GITHUB_PAGES=true`, and deploys `frontend/dist`.
 
-## CI/CD
-- GitHub Actions runs backend tests, frontend tests, and the production build automatically via [.github/workflows/ci.yml](.github/workflows/ci.yml).
+The `GITHUB_PAGES` build flag sets Vite's base path to `/CareerPilot-AI/`, so JavaScript, CSS, and worker assets load correctly from the project site URL.
+
+## Local development
+
+Run the backend and frontend commands in the [README](README.md#local-development). The static GitHub Pages build falls back gracefully when a local API is unavailable.
+
+## CI
+
+[.github/workflows/ci.yml](.github/workflows/ci.yml) runs backend tests, frontend tests, and the production build on pushes and pull requests.
