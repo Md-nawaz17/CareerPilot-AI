@@ -6,15 +6,11 @@ CareerPilot AI lets you upload or paste your resume, get an ATS-style score with
 
 ## Screenshots
 
-![Resume upload and ATS score header](screenshots/app-ats-score-93.png)
-
-![Score breakdown and recommendations](screenshots/app-score-breakdown-recommendations.png)
-
-![Keyword match preview](screenshots/app-keyword-match-preview.png)
-
-![Cover letter output with resume highlights](screenshots/app-cover-letter-highlights.png)
-
-![Score history panel](screenshots/app-score-history.png)
+- Resume upload and ATS score header — missing (no matching screenshot file).
+- Score breakdown and recommendations — missing (no matching screenshot file).
+- Keyword match preview — missing (no matching screenshot file).
+- Cover letter output with resume highlights — missing (no matching screenshot file).
+- Score history panel — missing (no matching screenshot file).
 
 ## Features
 
@@ -64,7 +60,9 @@ node .\node_modules\typescript\bin\tsc -b
 node .\node_modules\vite\bin\vite.js --host 127.0.0.1 --port 5173
 ```
 
-Open the application at: http://127.0.0.1:5173/
+`npm run dev` is an alternative for the frontend development server.
+
+Open the application at: [http://127.0.0.1:5173/](http://127.0.0.1:5173/)
 
 ### Test and build
 
@@ -81,3 +79,7 @@ cd frontend
 node .\node_modules\typescript\bin\tsc -b
 node .\node_modules\vite\bin\vite.js build
 ```
+
+`npm run build` is an alternative for the frontend build.
+
+Live demo: [https://md-nawaz17.github.io/CareerPilot-AI/](https://md-nawaz17.github.io/CareerPilot-AI/)
