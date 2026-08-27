@@ -6,11 +6,13 @@ CareerPilot AI lets you upload or paste your resume, get an ATS-style score with
 
 ## Screenshots
 
-- Resume upload and ATS score header — missing (no matching screenshot file).
-- Score breakdown and recommendations — missing (no matching screenshot file).
-- Keyword match preview — missing (no matching screenshot file).
-- Cover letter output with resume highlights — missing (no matching screenshot file).
-- Score history panel — missing (no matching screenshot file).
+![CareerPilot AI landing page hero with an ATS score preview](screenshots/app-20260804-130207.png)
+
+![Six-step CareerPilot AI workflow from resume upload through report export](screenshots/app-20260804-130221.png)
+
+![CareerPilot AI features including ATS scoring, job matching, cover letters, PDF export, offline fallback, and scan history](screenshots/app-20260804-130232.png)
+
+![CareerPilot AI call to action to analyze a resume](screenshots/app-20260804-130240.png)
 
 ## Features
 
